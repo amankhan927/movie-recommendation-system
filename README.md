@@ -20,7 +20,8 @@ A Machine Learning-powered Movie Recommendation System built using Python and St
 ## ▶️ Run Locally
 
 ```bash
-pip install -r requirements.txt
+pip install Streamlit
+and also install all required libraries
 streamlit run app.py
 ```
 
