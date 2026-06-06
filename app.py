@@ -1,9 +1,11 @@
+# import require libraries
 import streamlit as st
 import pickle
 import pandas as pd
 import requests
 
-def fatch_poster(movie_id):
+# create a function to fetch poster using API through movie_id
+def fetch_poster(movie_id):
     url = "https://api.themoviedb.org/3/movie/{}?api_key=ecf2734685ae7d726c0e8012133d46cf&language=en-US".format(
         movie_id)
     data = requests.get(url)
@@ -14,11 +16,11 @@ def fatch_poster(movie_id):
 
 
 
-
+# create a function ti extract movie name and their poasters image url
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
-    movies_list = sorted(list(enumerate(distances)),reverse=True,key = lambda x:x[1])[1:6]
+    movies_list = sorted(list(enumerate(distances)),reverse=True,key = lambda x:x[1])[1:6] # it used to extract only top 5 recommended movies
 
     recommend_movies = []
     movies_movies_poaster = []
@@ -26,14 +28,14 @@ def recommend(movie):
         movies_id = movies.iloc[i[0]].movie_id
         recommend_movies.append(movies.iloc[i[0]].title)
         # fatch poaster from api
-        movies_movies_poaster.append(fatch_poster(movies_id))
+        movies_movies_poaster.append(fetch_poster(movies_id))
     return recommend_movies,movies_movies_poaster
 
 st.title('Movie Recommendation System')
 
-movies_dict = pickle.load(open('Movies_dict.pkl','rb'))
+movies_dict = pickle.load(open('Movies_dict.pkl','rb'))   # Use Movies_dict.pkl which is our dataset
 movies = pd.DataFrame(movies_dict)
-similarity = pickle.load(open('similarity.pkl','rb'))
+similarity = pickle.load(open('similarity.pkl','rb'))      # Use similarity.pkl which is Vactarixation of Movies_dict dataset use to fatch similarity_score
 
 
 select_movie_name = st.selectbox(
@@ -46,7 +48,7 @@ if st.button('Recommend'):
     # Selected movie
     st.subheader(select_movie_name)
     col_left, col_center, col_right = st.columns([1.2, 1, 1])
-    selected_movie_poaster = fatch_poster(selected_movie_id)
+    selected_movie_poaster = fetch_poster(selected_movie_id)
 
     with col_center:
         st.image(
